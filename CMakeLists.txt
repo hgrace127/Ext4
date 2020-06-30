@@ -1,0 +1,22 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 3.15)
+
+SET (CMAKE_CXX_STANDARD 20)
+
+PROJECT (Ext4)
+
+SET (TEST_SOURCES
+	   Test/main.cpp
+     src/Ext4.cpp
+     src/iNode.cpp
+     src/Node.cpp
+     src/Superblock.cpp
+)
+
+ADD_DEFINITIONS(-DPOSIX)
+
+INCLUDE_DIRECTORIES (
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+
+ADD_EXECUTABLE (Test ${TEST_SOURCES})
