@@ -1,23 +1,16 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 3.15)
+cmake_minimum_required(VERSION 3.16)
+project(Ext4)
 
-SET (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 
-PROJECT (Ext4)
+include_directories(develop/include)
 
-SET (TEST_SOURCES
-  Test/main.cpp
-  src/Ext4.cpp
-  src/iNode.cpp
-  src/Node.cpp
-  src/Superblock.cpp
-  develop/src/byte_buffer2.cpp
-)
-
-ADD_DEFINITIONS(-DPOSIX)
-
-INCLUDE_DIRECTORIES (
-  develop/include
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-ADD_EXECUTABLE (Test ${TEST_SOURCES})
+add_executable(Ext4
+        develop/include/byte_buffer2.hpp
+        develop/include/endian_swap.hpp
+        develop/src/byte_buffer2.cpp
+        src/Ext4.cpp
+        src/iNode.cpp
+        src/Node.cpp
+        src/Superblock.cpp
+        Test/main.cpp)
