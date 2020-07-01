@@ -7,17 +7,17 @@ PROJECT (Ext4)
 SET (TEST_SOURCES
   Test/main.cpp
   src/Ext4.cpp
-  src/iNode.cpp
   src/Node.cpp
-  src/Superblock.cpp
   src/NodeList.cpp
-  ser/BlockGroupDescriptor.cpp
+  src/Superblock.cpp
+  src/BlockGroupDescriptor.cpp
   develop/src/byte_buffer2.cpp
 )
 
 ADD_DEFINITIONS(-DPOSIX)
 
 INCLUDE_DIRECTORIES (
+  include
   develop/include
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
