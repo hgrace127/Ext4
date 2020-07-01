@@ -10,6 +10,8 @@
 // uint16_t : uint16_t
 // uint8_t : uint8_t
 
+Superblock::Superblock() {}
+
 Superblock::Superblock(uint8_t* b, int offset)
 { 
     ByteBuffer2 bb(b, offset, 1024, true);
@@ -49,20 +51,4 @@ Superblock::Superblock(uint8_t* b, int offset)
     memcpy(UUID, b+offset+104, 16); // ?
     volumeName                          = new uint8_t[16];
     memcpy(volumeName, b+offset+120, 16);
-}
-
-auto Superblock::IsValid() -> bool
-{
-    return magicSignature == 0xef53 && iNodeSize != 0 && blkPerGroup !=0;
-};
-
-
-auto Superblock::BlkGroupDescSize() -> int
-{
-    return (incompatibleFeatureFlags & 0x80) == 0x80 ? padding3 : 0x20;
-}
-
-auto Superblock::ActiveiNodeNo() -> uint32_t
-{
-    return iNodeCnt - freeiNodeCnt;
 }

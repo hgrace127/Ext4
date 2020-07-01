@@ -1,6 +1,8 @@
 #pragma once
+#ifndef NODE_H
 
 #include <string>
+
 #include "NodeList.hpp"
 
 enum NodeType{
@@ -28,6 +30,7 @@ enum NodeAttr
     Recovered
 };
 
+class NodeList;
 class Node
 {
 public:
@@ -52,3 +55,4 @@ private:
     long m_offset;
     NodeType m_nodeType;
 };
+#endif // NODE_H

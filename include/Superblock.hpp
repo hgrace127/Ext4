@@ -1,12 +1,13 @@
+#pragma once
+
 #include <stdint.h>
 
 class Superblock
 {
 public:
+    Superblock();
     Superblock(uint8_t* b, int offset = 0);
-    auto BlkGroupDescSize() -> int;
-    auto ActiveiNodeNo() -> uint32_t;
-    auto IsValid() -> bool;
+
 public:
     uint32_t  iNodeCnt;
     uint32_t  blkCnt;
