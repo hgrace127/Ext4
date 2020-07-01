@@ -10,6 +10,8 @@ SET (TEST_SOURCES
   src/iNode.cpp
   src/Node.cpp
   src/Superblock.cpp
+  src/NodeList.cpp
+  ser/BlockGroupDescriptor.cpp
   develop/src/byte_buffer2.cpp
 )
 
