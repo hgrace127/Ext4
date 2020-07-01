@@ -30,7 +30,7 @@ public:
     Node m_rootNode;   
 
 private:
-    Superblock m_superblock;
+    Superblock* m_superblock;
     std::vector<BlockGroupDescriptor> m_blkGroupDescTable;
     int m_blockGroupCount;
     int m_iNodePerBlock;

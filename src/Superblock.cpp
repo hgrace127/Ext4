@@ -3,8 +3,8 @@
 #include <cstring>
 
 #include "Superblock.hpp"
-#include "develop/include/byte_buffer2.hpp"
-#include "develop/include/endian_swap.hpp"
+#include "byte_buffer2.hpp"
+#include "endian_swap.hpp"
 
 // uint32_t : uint32_t
 // uint16_t : uint16_t
@@ -17,6 +17,7 @@ Superblock::Superblock(uint8_t* b, int offset)
     ByteBuffer2 bb(b, offset, 1024, true);
     // ByteBuffer2 bb_ushort;
     iNodeCnt                            = bb.get_uint32_le();  // 총 아이노드 수
+    blkCnt                              = bb.get_uint32_le();
     reservedBlkCnt                      = bb.get_uint32_le();  // 총 블록 수
     freeBlkCnt                          = bb.get_uint32_le(); 
     freeiNodeCnt                        = bb.get_uint32_le(); 
@@ -46,7 +47,6 @@ Superblock::Superblock(uint8_t* b, int offset)
     compatibleFeatureFlags              = bb.get_uint32_le();
     incompatibleFeatureFlags            = bb.get_uint32_le();
     readOnlyFeatureFlags                = bb.get_uint32_le();
-
     UUID                                = new uint8_t[16];
     memcpy(UUID, b+offset+104, 16); // ?
     volumeName                          = new uint8_t[16];
