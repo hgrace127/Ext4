@@ -21,8 +21,8 @@ NodeStream::NodeStream(vector<Extent*>* extents, bool compact = false, long actu
         for(int i = 1; i < extents->size(); i++){
             Extent last = *compacted->back();
 
-            if (last.m_offset + last.m_count == extents->at(i).m_offset)
-                last.m_count += extents->at(i).m_count;
+            if (last.m_offset + last.m_count == extents->at(i)->m_offset)
+                last.m_count += extents->at(i)->m_count;
             else 
                 compacted->push_back(extents->at(i));
         }

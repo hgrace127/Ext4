@@ -5,6 +5,8 @@
 
 #include "Node.hpp"
 #include "INode.hpp"
+#include "Ext4_Extent.hpp"
+#include "DirectoryEntry.hpp"
 #include "NodeStream.hpp"
 #include "Superblock.hpp"
 #include "BlockGroupDescriptor.hpp"
@@ -25,28 +27,26 @@ class Ext4
 {
 public:
     Ext4(std::fstream* stream, long startAddress, bool isLive);
-
 private:
     auto initExt4() -> bool;
     auto makeBlkGroupDescriptorTable() -> void;
-    auto makeRootNode() -> Node;
+    auto makeRootNode() -> Node*;
     auto makeNode(DirectoryEntry* de) -> Node*;
-    auto makeNode(INode* inode, string name="", bool active=true) -> Node*;
+    auto makeNode(INode* inode, std::string name, bool active) -> Node*;
     auto findiNode(uint32_t no) -> INode*;
-    auto nodeStreamFrom(INode inode, uint8_t* extentsBuffer, bool active=true) -> NodeStream*;
-    auto buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active=true) -> std::vector<Ext4_Extent*>*;
+    auto nodeStreamFrom(INode inode, uint8_t* extentsBuffer, bool active) -> NodeStream*;
+    auto buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active) -> std::vector<Ext4_Extent*>*;
+
 public:
     long m_size;
     int m_blockSize;
     int m_iNodeSize;
-    Node m_rootNode;
+    Node* m_rootNode;
     std::fstream* m_stream;
-
-
-
 private:
     Superblock* m_superblock;
     std::list<BlockGroupDescriptor*>* m_blkGroupDescTable;
+    std::vector<Extent*>* m_indirectExtents;
     int m_blockGroupCount;
     int m_iNodePerBlock;
     int m_iNodeBlockCount;

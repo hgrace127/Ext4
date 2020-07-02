@@ -8,7 +8,7 @@ class INode
 public:
     INode(uint8_t* b, long offset, long inodeSize, long imageOffset);
     auto IsValid() -> bool;
-    auto SetVectorWithBytes(vector<uint8_t> to, uint8_t* from, long bSize) -> void;
+    //auto SetVectorWithBytes(std::vector<uint8_t> to, uint8_t* from, long bSize) -> void;
     auto UsesExtents() -> bool;
     auto IsDir() -> bool;
     auto IsFile() -> bool;
@@ -28,12 +28,12 @@ public:
     uint32_t   m_blkCount;
     uint32_t   m_flag;
     uint32_t   m_osDesc1;
-    std::vector<uint8_t> m_blkPointers; // NOTICE Ext3: 4 * 15, Ext4: 12 * 5
+    uint8_t* m_blkPointers; // NOTICE Ext3: 4 * 15, Ext4: 12 * 5
     uint32_t   m_generationNumber;
     uint32_t   m_fileACL;
     uint32_t   m_dirACL;
     uint32_t   m_blkAddrOfFragmentation;
-    std::vector<uint8_t> m_osDesc2;
+    uint8_t* m_osDesc2;
 
 // extra fields for Ext4
     uint16_t m_extraiSize;
@@ -48,9 +48,7 @@ public:
     int m_nodeSize;
     long m_address;
     long m_No;
-    std::string m_hashValue;
     long m_fileSize;
     std::string m_hexRepr;
-
-
-}
+    std::string m_hashValue;
+};

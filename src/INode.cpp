@@ -5,7 +5,7 @@ using namespace std;
 
 INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
 {
-    ByteBuffer2 bb(b, offset, inodeSize);
+    ByteBuffer2 bb(b, offset, inodeSize, false);
 
     m_address = imageOffset;
     m_hexRepr = "";
@@ -22,8 +22,8 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     m_blkCount    = bb.get_uint32_le(); // 28
     m_flag        = bb.get_uint32_le(); // 32
     m_osDesc1     = bb.get_uint32_le(); // 36
-    //blkPointers = bb.get_bytes(60);  // 40  NOTICE: in Ext3 4 * 15 = 60
-    SetVectorWithBytes(&m_blkPointers, bb.get_bytes(60), 60);
+    m_blkPointers = bb.get_bytes(60);  // 40  NOTICE: in Ext3 4 * 15 = 60
+    // SetVectorWithBytes(m_blkPointers, bb.get_bytes(60), 60);
     
     m_generationNumber
                 = bb.get_uint32_le(); // 100
@@ -31,8 +31,8 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     m_dirACL      = bb.get_uint32_le(); // 108
     m_blkAddrOfFragmentation
                 = bb.get_uint32_le(); // 112
-    //osDesc2     = bb.get_bytes(12);  // 116
-    SetVectorWithBytes(&m_osDesc2, bb.get_bytes(12), 12);
+    m_osDesc2     = bb.get_bytes(12);  // 116
+    // SetVectorWithBytes(m_osDesc2, bb.get_bytes(12), 12);
 
     if (UsesExtents())
     {
@@ -53,29 +53,31 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     m_nodeSize = inodeSize;
     m_fileSize = m_sizeInBytes;
     long sizeHigh = m_dirACL;
-    m_fileSize += sizeHigh << 32;
+    m_fileSize += (sizeHigh << 32);
 }
 
 auto INode::IsValid() -> bool
 {
+    //m_blkPointers size == 60
     bool flag = false;
-    vector<uint8_t>::iterator it;
 
-    for(it=m_blkPointers.begin(); it != m_blkPointers.end(); it++)
-        if(*it > 0)
+    for(uint8_t i=0; i<60; i++)
+    {
+        if(*(m_blkPointers + i) > 0)
         {
             flag = true;
             break;
         }
+    }
 
     return m_fileSize > 0 && flag;
 }
 
-auto INode::SetVectorWithBytes(vector<uint8_t>* to, uint8_t* from, long bSize) -> void
-{
-    for(int i=0; i < bSize; i++)
-        to->push_back(from[i]);
-}
+// auto INode::SetVectorWithBytes(vector<uint8_t>* to, uint8_t* from, long bSize) -> void
+// {
+//     for(int i=0; i < bSize; i++)
+//         to->push_back(from[i]);
+// }
 
 auto INode::UsesExtents() -> bool
 {

@@ -92,21 +92,21 @@ auto Ext4::makeBlkGroupDescriptorTable() -> void
     delete b0;   
 }
 
-auto Ext4::makeRootNode() -> Node
+auto Ext4::makeRootNode() -> Node*
 {
     DirectoryEntry* de = new DirectoryEntry(2);
     de->SetName("/");
 
     Node* node = makeNode(de);
-    return node->IsDirectory() ? node : makeEmptyRoot();
-
+    //return node->IsDirectory() ? node : makeEmptyRoot();
+    return nullptr;
 }
 
 auto Ext4::makeNode(DirectoryEntry* de) -> Node*
 {
     INode* iNode = findiNode(de->m_iNodeNo);
     
-    Node* node = makeNode(iNode, de->m_name);
+    Node* node = makeNode(iNode, de->m_name, true);
 
     node->m_iNodeNo = de->m_iNodeNo;
 
@@ -114,7 +114,7 @@ auto Ext4::makeNode(DirectoryEntry* de) -> Node*
 }
 
 
-auto Ext4::makeNode(INode* inode, string name="", bool active=true) -> Node*
+auto Ext4::makeNode(INode* inode, string name = "", bool active = true) -> Node*
 {
     auto type = NodeType::None;
 
@@ -128,16 +128,17 @@ auto Ext4::makeNode(INode* inode, string name="", bool active=true) -> Node*
     if (name.empty())
         name = to_string(inode->m_address);
 
-    if (type == NodeType::SoftLink)
-        return new Node(name, type, nullptr);
+    // if (type == NodeType::SoftLink)
+    //     return new Node(name, type, nullptr);
 
-    Node* n0 = new Node(name, type, )
+    // Node* n0 = new Node(name, type, )
 
+    return nullptr;
 }
 
 auto Ext4::findiNode(uint32_t no) -> INode*
-{
-
+{  
+    return nullptr;
 }
 
 auto Ext4::nodeStreamFrom(INode inode, uint8_t* extentsBuffer, bool active=true) -> NodeStream*
@@ -197,7 +198,7 @@ auto Ext4::buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedL
 
             uint8_t* indirect = new uint8_t[m_blockSize];
 
-            m_stream->seekg(startBlkNo * m_blockSize, m_stream->beg());
+            m_stream->seekg(startBlkNo * m_blockSize);
             m_stream->read((char*)indirect, m_blockSize);
 
             vector<Ext4_Extent*>* extents = buildExtentsFrom(inode, indirect, expectedLogicalBlkNo);
@@ -206,13 +207,12 @@ auto Ext4::buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedL
                 return nullptr;
 
             vector<Ext4_Extent*>::iterator it;
-            for(it = extExtents->begin(); it != extExtents->end(); it++){
+            // for(it = extExtents->begin(); it != extExtents->end(); it++){
 
-            }
+            // }
 
 
         }
     } 
-
-
+    return nullptr;
 }

@@ -37,7 +37,7 @@ auto Extent::Read(long start, uint8_t* buffer, int offset, int count) -> int
         return -1;
 
     long here = m_offset + start;
-    m_stream->seekg(here, m_stream->beg());
+    m_stream->seekg(here, m_stream->beg);
     m_stream->read((char*)buffer, count);
     
     return count;

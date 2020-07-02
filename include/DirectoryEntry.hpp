@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 #include <string>
 
@@ -20,5 +22,4 @@ public:
     int8_t m_fileType;
     std::string m_name;
 private:
-
 };
