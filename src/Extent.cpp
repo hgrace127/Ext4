@@ -1,6 +1,5 @@
 #include "Extent.hpp"
 
-
 using namespace std;
 
 Extent::Extent(fstream* stream, long offset = -1L, long count = -1L)

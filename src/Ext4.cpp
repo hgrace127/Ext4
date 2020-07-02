@@ -176,7 +176,7 @@ auto Ext4::nodeStreamFrom(INode inode, uint8_t* extentsBuffer, bool active=true)
 
 auto Ext4::buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active=true) -> vector<Ext4_Extent*>*
 {
-    vector<Extent>* extExtents = new vector<Extent>();
+    vector<Ext4_Extent*>* extExtents = new vector<Ext4_Extent*>();
     
     ByteBuffer2 bb(extentsBuffer, 0, m_iNodeSize);
     uint16_t signature = bb.get_uint16_le();
@@ -206,13 +206,44 @@ auto Ext4::buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedL
             if (extents == nullptr)
                 return nullptr;
 
-            vector<Ext4_Extent*>::iterator it;
-            // for(it = extExtents->begin(); it != extExtents->end(); it++){
-
-            // }
-
-
+            for(int i=0; i < extents->size(); i++){
+                extExtents->push_back(extents->at(i));
+            }
         }
-    } 
-    return nullptr;
+    }
+    else
+    {
+        for(int i=0; i <= extentCount; i++)
+        {
+            long offset = i * 12;
+            uint32_t logicalBlkNo = bb.get_uint32_le(offset);
+
+            if (logicalBlkNo > (*expectedLogicalBlkNo))
+            {
+                long cnt1 = (logicalBlkNo - (*expectedLogicalBlkNo)) * m_blockSize;
+                Ext4_Extent* ext1 = new Ext4_Extent(0, -1L, cnt1);
+                extExtents->push_back(ext1);
+            }
+
+            long noOfBlk = bb.get_uint16_le(offset + 4);
+            if (noOfBlk > 0x8000)
+                noOfBlk -= 0x8000;
+
+            long startBlkNo = bb.get_uint16_le(offset + 6);
+            startBlkNo <<= 32;
+            startBlkNo |= bb.get_uint32_le(offset + 8);
+
+            *expectedLogicalBlkNo = noOfBlk + logicalBlkNo;
+
+            if (m_size > startBlkNo * m_blockSize)
+                return nullptr;
+            
+            extExtents->push_back(new Ext4_Extent(logicalBlkNo, startBlkNo * m_blockSize, noOfBlk * m_blockSize));
+        }
+
+        if (active && extentCount == 0)
+            extExtents->push_back(new Ext4_Extent(0, -1L, 0));
+    }
+    
+    return extExtents;
 }

@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <stdint.h>
+
 class Extent
 {
 public:

@@ -11,6 +11,7 @@ SET (TEST_SOURCES
   src/INode.cpp
   src/Node.cpp
   src/NodeList.cpp
+  src/NodeStream.cpp
   src/Extent.cpp
   src/Ext4_Extent.cpp
   src/Superblock.cpp

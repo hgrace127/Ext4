@@ -14,7 +14,7 @@ public:
     auto AllocLength() -> long;
 
 public:
-    std::vector<Extent>* m_extents;
+    std::vector<Extent*>* m_extents;
 
     long m_offset = 0;
     long m_actualLength;

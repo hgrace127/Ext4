@@ -23,16 +23,14 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     m_flag        = bb.get_uint32_le(); // 32
     m_osDesc1     = bb.get_uint32_le(); // 36
     m_blkPointers = bb.get_bytes(60);  // 40  NOTICE: in Ext3 4 * 15 = 60
-    // SetVectorWithBytes(m_blkPointers, bb.get_bytes(60), 60);
     
     m_generationNumber
-                = bb.get_uint32_le(); // 100
+                  = bb.get_uint32_le(); // 100
     m_fileACL     = bb.get_uint32_le(); // 104
     m_dirACL      = bb.get_uint32_le(); // 108
     m_blkAddrOfFragmentation
-                = bb.get_uint32_le(); // 112
+                  = bb.get_uint32_le(); // 112
     m_osDesc2     = bb.get_bytes(12);  // 116
-    // SetVectorWithBytes(m_osDesc2, bb.get_bytes(12), 12);
 
     if (UsesExtents())
     {
@@ -72,12 +70,6 @@ auto INode::IsValid() -> bool
 
     return m_fileSize > 0 && flag;
 }
-
-// auto INode::SetVectorWithBytes(vector<uint8_t>* to, uint8_t* from, long bSize) -> void
-// {
-//     for(int i=0; i < bSize; i++)
-//         to->push_back(from[i]);
-// }
 
 auto INode::UsesExtents() -> bool
 {

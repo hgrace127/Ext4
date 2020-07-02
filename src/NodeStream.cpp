@@ -6,16 +6,15 @@ using namespace std;
 
 NodeStream::NodeStream()
 {
-    m_extents = new vector<Extent>();
+    m_extents = new vector<Extent*>();
 }
 
 NodeStream::NodeStream(vector<Extent*>* extents, bool compact = false, long actualLength = 0){
     if (compact && extents->size() > 0)
     {
         vector<Extent*>* compacted = new vector<Extent*>;
-        vector<Extent*>::iterator it;
-        for(it = extents->begin(); it != extents->end(); it++){
-            compacted->push_back(*it);
+        for(int i=0; i < extents->size(); i++){
+            compacted->push_back(extents->at(i));
         }
 
         for(int i = 1; i < extents->size(); i++){
@@ -46,8 +45,8 @@ auto NodeStream::AllocLength() -> long
 {
     vector<Extent>::iterator it;
     long rst = 0;
-    for(it = m_extents->begin(); it != m_extents->end(); it++){
-        rst += it->m_count;
+    for(int i=0; i < m_extents->size();i++){
+        rst += m_extents->at(i)->m_count;
     }
 
     return rst;

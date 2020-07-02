@@ -38,6 +38,7 @@ int main(){
     cout << hex << "inode size : " << sb->iNodeSize << endl;
     for(int i=0; i < 16; i++)
         printf("%x", sb->UUID[i]);
+    cout << endl;
     cout << hex << "volume name : " << sb->volumeName << endl;
     
 
