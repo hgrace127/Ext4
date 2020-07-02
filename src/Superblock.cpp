@@ -14,7 +14,7 @@ Superblock::Superblock() {}
 
 Superblock::Superblock(uint8_t* b, int offset)
 { 
-    ByteBuffer2 bb(b, offset, 1024, true);
+    ByteBuffer2 bb(b, offset, 1024, false);
     // ByteBuffer2 bb_ushort;
     iNodeCnt                            = bb.get_uint32_le();  // 총 아이노드 수
     blkCnt                              = bb.get_uint32_le();
