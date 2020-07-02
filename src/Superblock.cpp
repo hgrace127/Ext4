@@ -4,7 +4,6 @@
 
 #include "Superblock.hpp"
 #include "byte_buffer2.hpp"
-#include "endian_swap.hpp"
 
 // uint32_t : uint32_t
 // uint16_t : uint16_t
@@ -51,4 +50,45 @@ Superblock::Superblock(uint8_t* b, int offset)
     memcpy(UUID, b+offset+104, 16); // ?
     volumeName                          = new uint8_t[16];
     memcpy(volumeName, b+offset+120, 16);
+    
+    lastMountedPath = new uint8_t[64];
+    memcpy(lastMountedPath, b+offset+136, 64);
+
+    algorithmUsageBitmap = bb.get_uint32_le();
+    preAllocatedBlkCount = bb[204];
+    preAllocatedDirBlkCount = bb[205];
+    padding1        = bb.get_uint16_le();
+
+    journalUUID = new uint8_t[16];
+    memcpy(journalUUID, b+offset+208, 16);
+
+    journaliNodeNo = bb.get_uint32_le();
+    journalDevice            = bb.get_uint32_le();
+    journalOrphaniNodeList   = bb.get_uint32_le();
+
+    hashSeed = new uint8_t[16];
+    memcpy(hashSeed, b+offset+236, 16);
+
+    definedHashVersion       = b[252];
+    padding2                 = b[253];
+    padding3                 = bb.get_uint16_le();
+    defaultMountOption       = bb.get_uint32_le();
+    firstMetaBlock           = bb.get_uint32_le();
+}
+
+auto Superblock::BlkGrouDescSize() -> int
+{
+    return (incompatibleFeatureFlags & 0x80) == 0x80
+    ? padding3
+    : 0x20;
+}
+
+auto Superblock::ActiveiNodeNo() -> unsigned int
+{
+    return iNodeCnt - freeiNodeCnt;
+}
+
+auto Superblock::IsValid() -> bool
+{
+    return magicSignature == 0xef53 && iNodeSize != 0 && blkPerGroup != 0;
 }

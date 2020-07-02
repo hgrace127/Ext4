@@ -15,4 +15,5 @@ public:
 
 public:
     BlockGroupDescriptor(uint8_t buff[], int offset);
+    auto IsEmpty() -> bool;
 };

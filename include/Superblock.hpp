@@ -7,6 +7,9 @@ class Superblock
 public:
     Superblock();
     Superblock(uint8_t* b, int offset = 0);
+    auto BlkGrouDescSize() -> int;
+    auto IsValid() -> bool;
+    auto ActiveiNodeNo() -> unsigned int;
 
 public:
     uint32_t  iNodeCnt;
@@ -51,7 +54,7 @@ public:
     uint32_t  journaliNodeNo;
     uint32_t  journalDevice;
     uint32_t  journalOrphaniNodeList;
-    uint8_t* hashSeed;
+    uint8_t*    hashSeed;
     uint8_t   definedHashVersion;
     uint8_t   padding2;
     uint16_t padding3;

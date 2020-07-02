@@ -11,3 +11,8 @@ BlockGroupDescriptor::BlockGroupDescriptor(uint8_t buff[], int offset){
     freeiNodeCount = bb.get_uint32_le(offset + 14); 
     dirCount       = bb.get_uint32_le(offset + 16); 
 }
+
+auto BlockGroupDescriptor::IsEmpty() -> bool
+{
+    return startAddrOfBlkBitmap == 0;
+}

@@ -35,6 +35,7 @@ class Node
 {
 public:
     Node();
+    auto IsDirectory() -> bool;
 
 public:
     long m_uid;
@@ -42,6 +43,7 @@ public:
     unsigned short m_filemode;
     long m_size;
     long m_allocSize;
+    long m_iNodeNo;
     unsigned long m_refId;
     int m_dumpId;
     NodeList* m_children;
