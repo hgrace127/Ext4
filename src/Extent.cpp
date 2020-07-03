@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Extent::Extent(fstream* stream, long offset = -1L, long count = -1L)
+Extent::Extent(ifstream* stream, long offset = -1L, long count = -1L)
 {
     m_stream = stream;
     m_offset = offset;

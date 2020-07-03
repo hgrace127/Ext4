@@ -17,6 +17,6 @@ public:
     long m_offset = 0;
     long m_actualLength;
     std::vector<Extent*>* m_extents;
-    std::fstream* m_nullstream = nullptr;
+    std::ifstream* m_nullstream = nullptr;
     // lock
 };
