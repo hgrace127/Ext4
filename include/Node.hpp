@@ -2,6 +2,7 @@
 #ifndef NODE_H
 
 #include <string>
+#include <stdint.h>
 
 #include "NodeList.hpp"
 
@@ -15,7 +16,7 @@ enum NodeType{
 
 enum NodeState
 {
-    Active, // Active 우선 구현
+    Active,
     Deleted, 
     Unused
 };
@@ -40,11 +41,11 @@ public:
 public:
     long m_uid;
     long m_gid;
-    unsigned short m_filemode;
+    uint16_t m_filemode;
     long m_size;
     long m_allocSize;
     long m_iNodeNo;
-    unsigned long m_refId;
+    uint64_t m_refId;
     int m_dumpId;
     NodeList* m_children;
     Node* m_parent;

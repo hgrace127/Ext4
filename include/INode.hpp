@@ -8,12 +8,10 @@ class INode
 public:
     INode(uint8_t* b, long offset, long inodeSize, long imageOffset);
     auto IsValid() -> bool;
-    //auto SetVectorWithBytes(std::vector<uint8_t> to, uint8_t* from, long bSize) -> void;
     auto UsesExtents() -> bool;
     auto IsDir() -> bool;
     auto IsFile() -> bool;
     auto IsSoftLink() -> bool;
-
 
 public:
     uint16_t   m_fileMode;
@@ -46,9 +44,9 @@ public:
     uint32_t   m_versionHi;         // high 32 bits for 64-bit version
 
     int  m_nodeSize;
-    long m_address;
-    long m_No;
-    long m_fileSize;
+    int64_t m_address;
+    int64_t m_No;
+    int64_t m_fileSize;
     std::string m_hexRepr;
     std::string m_hashValue;
 };

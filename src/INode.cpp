@@ -22,15 +22,14 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     m_blkCount    = bb.get_uint32_le(); // 28
     m_flag        = bb.get_uint32_le(); // 32
     m_osDesc1     = bb.get_uint32_le(); // 36
-    m_blkPointers = bb.get_bytes(60);  // 40  NOTICE: in Ext3 4 * 15 = 60
-    
+    m_blkPointers = bb.get_bytes(60);   // 40  NOTICE: in Ext3 4 * 15 = 60
     m_generationNumber
                   = bb.get_uint32_le(); // 100
     m_fileACL     = bb.get_uint32_le(); // 104
     m_dirACL      = bb.get_uint32_le(); // 108
     m_blkAddrOfFragmentation
                   = bb.get_uint32_le(); // 112
-    m_osDesc2     = bb.get_bytes(12);  // 116
+    m_osDesc2     = bb.get_bytes(12);   // 116
 
     if (UsesExtents())
     {
@@ -50,7 +49,7 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
 
     m_nodeSize = inodeSize;
     m_fileSize = m_sizeInBytes;
-    long sizeHigh = m_dirACL;
+    int64_t sizeHigh = m_dirACL;
     m_fileSize += (sizeHigh << 32);
 }
 
@@ -59,7 +58,7 @@ auto INode::IsValid() -> bool
     //m_blkPointers size == 60
     bool flag = false;
 
-    for(uint8_t i=0; i<60; i++)
+    for(uint8_t i=0; i < 60; i++)
     {
         if(*(m_blkPointers + i) > 0)
         {

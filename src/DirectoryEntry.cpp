@@ -19,7 +19,7 @@ DirectoryEntry::DirectoryEntry(uint8_t* b, long bSize ,long offset)
     ByteBuffer2 bb (b, bSize, false);
 
     m_iNodeNo = bb.get_uint32_le();
-    m_recodeLength = bb.get_uint32_le();
+    m_recodeLength = bb.get_uint16_le();
     m_nameLength = bb.get_bytes(1)[0];
     m_fileType = bb.get_bytes(1)[0];
     m_name = string(reinterpret_cast<const char *>(bb.get_bytes(m_nameLength)), m_nameLength);

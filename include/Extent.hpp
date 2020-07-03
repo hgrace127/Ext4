@@ -12,10 +12,8 @@ public:
     auto Read(long start, uint8_t* buffer, int offset, int count) -> int;
     auto Contains(long address) -> bool;
 
-private:
-
 public:
-    long m_offset;
-    long m_count;
+    int64_t m_offset;
+    int64_t m_count;
     std::fstream *m_stream;
 };

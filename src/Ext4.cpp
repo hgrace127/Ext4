@@ -229,7 +229,7 @@ auto Ext4::buildExtentsFrom(INode inode, uint8_t* extentsBuffer, long* expectedL
             if (noOfBlk > 0x8000)
                 noOfBlk -= 0x8000;
 
-            long startBlkNo = bb.get_uint16_le(offset + 6);
+            int64_t startBlkNo = bb.get_uint16_le(offset + 6);
             startBlkNo <<= 32;
             startBlkNo |= bb.get_uint32_le(offset + 8);
 

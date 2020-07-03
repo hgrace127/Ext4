@@ -14,7 +14,7 @@ auto Extent::Take(long offset, long count = 0) -> Extent*
     if (offset < 0 || offset >= m_count)
         return nullptr;
 
-    long  limit = m_count - offset;
+    long limit = m_count - offset;
 
     if (limit <= 0)
         return nullptr;
