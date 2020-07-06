@@ -7,10 +7,10 @@ class Extent
 {
 public:
     Extent(std::ifstream* stream, long offset, long count);
-    auto Take(long offset, long count) -> Extent*;
-    auto CreateExtentFrom(long start) -> Extent*;
-    auto Read(long start, uint8_t* buffer, int offset, int count) -> int;
-    auto Contains(long address) -> bool;
+    auto take(long offset, long count) -> Extent*;
+    auto create_extent_from(long start) -> Extent*;
+    auto read(long start, uint8_t* buffer, int offset, int count) -> int;
+    auto contains(long address) -> bool;
 
 public:
     int64_t m_offset;

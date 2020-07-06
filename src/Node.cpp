@@ -20,12 +20,12 @@ Node::Node(string name, NodeType t, NodeStream* stream, NodeAttr attr)
 Node::Node(string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr attr, long allocSize)
 {
     m_state = s;
-    m_nodeType = t;
+    m_node_type = t;
     m_attr   = attr;
 
-    assert(IsHardLink() == false);
+    assert(is_hard_link() == false);
 
-    m_absolutePath = name.rfind("/", 0) == 0 ? name : "/" + name;
+    m_absolute_path = name.rfind("/", 0) == 0 ? name : "/" + name;
     m_name = name;
 
     m_stream   = stream != nullptr ? stream : new NodeStream();
@@ -35,35 +35,35 @@ Node::Node(string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr at
     m_parent    = nullptr;
     m_check     = false;
 
-    m_SignatureMatching = FileSignatureMatching::None;
+    m_signature_matching = FileSignatureMatching::None;
 }
 
-auto Node::IsDirectory() -> bool
+auto Node::is_directory() -> bool
 {
-    return m_nodeType == NodeType::Directory ? true : false;
+    return m_node_type == NodeType::Directory ? true : false;
 }
 
-auto Node::IsHardLink() -> bool
+auto Node::is_hard_link() -> bool
 {
-    return m_nodeType == NodeType::HardLink;
+    return m_node_type == NodeType::HardLink;
 }
 
-auto Node::setAbsolutePath(string value) -> void
+auto Node::set_absolute_path(string value) -> void
 {
-    m_absolutePath = value;
+    m_absolute_path = value;
 }
 
-auto Node::setCheck(bool value) -> void
+auto Node::set_check(bool value) -> void
 {
     if(m_check == value)
         return;
 
     m_check = value;
-    UpdateChildCheck(this, m_check);
-    UpdateParentCheck(this);
+    update_child_check(this, m_check);
+    update_parent_check(this);
 }
 
-auto Node::UpdateChildCheck(Node *n, bool check) -> void 
+auto Node::update_child_check(Node *n, bool check) -> void 
 {
     Node* c;
     for(int i=0; i < n->m_children->m_nodes->size(); i++)
@@ -71,10 +71,10 @@ auto Node::UpdateChildCheck(Node *n, bool check) -> void
         c = n->m_children->m_nodes->at(i);
         c->m_check = check;
 
-        UpdateChildCheck(c, check);
+        update_child_check(c, check);
     }
 }
-auto Node::UpdateParentCheck(Node *n) -> void 
+auto Node::update_parent_check(Node *n) -> void 
 {
     while(true)
     {
@@ -82,12 +82,12 @@ auto Node::UpdateParentCheck(Node *n) -> void
             return;
 
             Node* parent = n->m_parent;
-            UpdateCheckByChildren(parent);
+            update_check_by_children(parent);
             n = parent;
     }
 }
 
-auto Node::UpdateCheckByChildren(Node *n) -> void 
+auto Node::update_check_by_children(Node *n) -> void 
 {
     if (n == nullptr || n->m_children->m_count == 0)
         return;

@@ -39,34 +39,23 @@ Superblock::Superblock(uint8_t* b, int offset)
     m_compatibleFeatureFlags              = bb.get_uint32_le();
     m_incompatibleFeatureFlags            = bb.get_uint32_le();
     m_readOnlyFeatureFlags                = bb.get_uint32_le();
-    //m_UUID                                = new uint8_t[16];
-    memcpy(m_UUID, b+offset+104, 16); // ?
-    //m_volumeName                          = new uint8_t[16];
+    memcpy(m_UUID, b+offset+104, 16);
     memcpy(m_volumeName, b+offset+120, 16);
-    
-    //m_lastMountedPath = new uint8_t[64];
     memcpy(m_lastMountedPath, b+offset+136, 64);
-
-    m_algorithmUsageBitmap = bb.get_uint32_le();
-    m_preAllocatedBlkCount = bb[204];
-    m_preAllocatedDirBlkCount = bb[205];
-    m_padding1        = bb.get_uint16_le();
-
-    //m_journalUUID = new uint8_t[16];
+    m_algorithmUsageBitmap     = bb.get_uint32_le(200);
+    m_preAllocatedBlkCount     = bb[204];
+    m_preAllocatedDirBlkCount  = bb[205];
+    m_padding1                 = bb.get_uint16_le(206);
     memcpy(m_journalUUID, b+offset+208, 16);
-
-    m_journaliNodeNo = bb.get_uint32_le();
-    m_journalDevice            = bb.get_uint32_le();
-    m_journalOrphaniNodeList   = bb.get_uint32_le();
-
-    //m_hashSeed = new uint8_t[16];
+    m_journaliNodeNo           = bb.get_uint32_le(224);
+    m_journalDevice            = bb.get_uint32_le(228);
+    m_journalOrphaniNodeList   = bb.get_uint32_le(232);
     memcpy(m_hashSeed, b+offset+236, 16);
-
     m_definedHashVersion       = b[252];
     m_padding2                 = b[253];
-    m_padding3                 = bb.get_uint16_le();
-    m_defaultMountOption       = bb.get_uint32_le();
-    m_firstMetaBlock           = bb.get_uint32_le();
+    m_padding3                 = bb.get_uint16_le(254);
+    m_defaultMountOption       = bb.get_uint32_le(256);
+    m_firstMetaBlock           = bb.get_uint32_le(260);
 }
 
 auto Superblock::blk_group_desc_size() -> int

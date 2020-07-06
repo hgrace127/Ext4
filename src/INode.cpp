@@ -31,7 +31,7 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
                   = bb.get_uint32_le(); // 112
     m_osDesc2     = bb.get_bytes(12);   // 116
 
-    if (UsesExtents())
+    if (use_extents())
     {
         m_extraiSize = bb.get_uint16_le(); // extra fields
         m_chksumHi   = bb.get_uint16_le();
@@ -53,7 +53,7 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     m_fileSize += (sizeHigh << 32);
 }
 
-auto INode::IsValid() -> bool
+auto INode::is_valid() -> bool
 {
     //m_blkPointers size == 60
     bool flag = false;
@@ -70,20 +70,20 @@ auto INode::IsValid() -> bool
     return m_fileSize > 0 && flag;
 }
 
-auto INode::UsesExtents() -> bool
+auto INode::use_extents() -> bool
 {
     return (m_flag & 0x80000) == 0x80000;
 }
 
-auto INode::IsDir() -> bool
+auto INode::is_directory() -> bool
 {
     return (m_fileMode & 0xF000) == 0x4000;
 }
-auto INode::IsFile() -> bool
+auto INode::is_file() -> bool
 {
     return (m_fileMode & 0xF000) == 0x8000;
 }
-auto INode::IsSoftLink() -> bool
+auto INode::is_soft_link() -> bool
 {
     return (m_fileMode & 0xF000) == 0xA000;
 }

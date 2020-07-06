@@ -5,15 +5,15 @@
 class BlockGroupDescriptor{
 public:
     const static int Size = 0x20;
-    uint32_t startAddrOfBlk;
-    uint32_t startAddrOfBlkBitmap;
-    uint32_t startBlkAddrOfiNodeBitmap;
-    uint32_t startBlkAddrOfiNodeTable;
-    uint16_t freeBlockCount;
-    uint16_t freeiNodeCount;
-    uint16_t dirCount;
+    uint32_t start_addr_of_blk;
+    uint32_t start_addr_of_blk_bitmap;
+    uint32_t start_blk_addr_of_inode_bitmap;
+    uint32_t start_blk_addr_of_inode_table;
+    uint16_t free_block_count;
+    uint16_t free_inode_count;
+    uint16_t directory_count;
 
 public:
     BlockGroupDescriptor(uint8_t buff[], int offset);
-    auto IsEmpty() -> bool;
+    auto is_empty() -> bool;
 };

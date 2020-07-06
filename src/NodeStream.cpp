@@ -4,7 +4,11 @@
 
 using namespace std;
 
-NodeStream::NodeStream() {}
+NodeStream::NodeStream() 
+{
+    m_offset = 0;
+    m_actual_length = 0;
+}
 
 NodeStream::NodeStream(vector<Extent*> extents, bool compact = false, long actualLength = 0){
     if (compact && extents.size() > 0)
@@ -35,7 +39,7 @@ NodeStream::NodeStream(vector<Extent*> extents, bool compact = false, long actua
 
 auto NodeStream::set_length(long val) -> void
 {
-    m_actualLength = val;
+    m_actual_length = val;
 }
 
 auto NodeStream::alloc_length() -> long

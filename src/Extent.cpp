@@ -9,7 +9,7 @@ Extent::Extent(ifstream* stream, long offset = -1L, long count = -1L)
     m_count = count;
 }
 
-auto Extent::Take(long offset, long count = 0) -> Extent*
+auto Extent::take(long offset, long count = 0) -> Extent*
 {
     if (offset < 0 || offset >= m_count)
         return nullptr;
@@ -25,12 +25,12 @@ auto Extent::Take(long offset, long count = 0) -> Extent*
     return new Extent(m_stream, m_offset + offset, limit);
 }
 
-auto Extent::CreateExtentFrom(long start) -> Extent*
+auto Extent::create_extent_from(long start) -> Extent*
 {
     return m_offset > start ? new Extent(m_stream, start, m_offset - start) : nullptr;
 }
 
-auto Extent::Read(long start, uint8_t* buffer, int offset, int count) -> int 
+auto Extent::read(long start, uint8_t* buffer, int offset, int count) -> int 
 {
     if (!m_stream->is_open() || !m_stream->good())
         return -1;
@@ -42,7 +42,7 @@ auto Extent::Read(long start, uint8_t* buffer, int offset, int count) -> int
     return count;
 }
 
-auto Extent::Contains(long address) -> bool
+auto Extent::contains(long address) -> bool
 {
     return m_offset >= 0 && address >= m_offset && address < m_offset + m_count;
 }

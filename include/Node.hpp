@@ -15,14 +15,14 @@ enum class NodeType{
     SoftLink
 };
 
-enum NodeState
+enum class NodeState
 {
     Active,
     Deleted, 
     Unused
 };
 
-enum NodeAttr
+enum class NodeAttr
 {
     Normal,
     Container,
@@ -48,13 +48,13 @@ public:
     Node(NodeType t);
     Node(std::string name, NodeType t, NodeStream* stream, NodeAttr attr);
     Node(std::string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr attr, long allocSize);
-    auto IsDirectory() -> bool;
-    auto IsHardLink() -> bool;
-    auto setAbsolutePath(std::string value) -> void;
-    auto setCheck(bool value) -> void;
-    auto UpdateChildCheck(Node *n, bool check) -> void;
-    auto UpdateParentCheck(Node *n) -> void;
-    auto UpdateCheckByChildren(Node *n) -> void;
+    auto is_directory() -> bool;
+    auto is_hard_link() -> bool;
+    auto set_absolute_path(std::string value) -> void;
+    auto set_check(bool value) -> void;
+    auto update_child_check(Node *n, bool check) -> void;
+    auto update_parent_check(Node *n) -> void;
+    auto update_check_by_children(Node *n) -> void;
 
 public:
     long m_uid;
@@ -62,26 +62,26 @@ public:
     uint16_t m_filemode;
     long m_size;
     long m_allocSize;
-    long m_iNodeNo;
-    uint64_t m_refId;
-    int m_dumpId;
+    long m_iNode_no;
+    uint64_t m_ref_id;
+    int m_dump_id;
     bool m_check;
 
     NodeList* m_children;
     Node* m_parent;
     NodeStream* m_stream;
-    NodeAttr m_nodeAttr;
+    NodeAttr m_node_attr;
     NodeState m_state;
     NodeAttr m_attr;
 
-    FileSignatureMatching m_SignatureMatching;
+    FileSignatureMatching m_signature_matching;
     
 private:
-    std::string m_absolutePath; // 절대경로
+    std::string m_absolute_path; // 절대경로
     std::string m_name; 
     std::string m_extension; // 확장자
-    std::string m_partitionName;
+    std::string m_partition_name;
     long m_offset;
-    NodeType m_nodeType;
+    NodeType m_node_type;
 };
 #endif // NODE_H

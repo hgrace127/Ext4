@@ -7,11 +7,11 @@ class INode
 {
 public:
     INode(uint8_t* b, long offset, long inodeSize, long imageOffset);
-    auto IsValid() -> bool;
-    auto UsesExtents() -> bool;
-    auto IsDir() -> bool;
-    auto IsFile() -> bool;
-    auto IsSoftLink() -> bool;
+    auto is_valid() -> bool;
+    auto use_extents() -> bool;
+    auto is_directory() -> bool;
+    auto is_file() -> bool;
+    auto is_soft_link() -> bool;
 
 public:
     uint16_t   m_fileMode;

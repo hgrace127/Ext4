@@ -14,10 +14,9 @@ NodeList::NodeList(Node *node, bool isOwner = true)
     }
     else
     {
-        m_activeNodeIndex = 0;
+        m_active_node_index = 0;
 
         //param node가 m_nodes에 있는지 확인하고 없으면 add
-
         vector<Node*>::iterator it = find(m_nodes->begin(), m_nodes->end(), node);
         if(it != m_nodes->end())
         {

@@ -14,8 +14,8 @@ public:
     auto alloc_length() -> long;
 
 public:
-    long m_offset = 0;
-    long m_actualLength;
+    long m_offset;
+    long m_actual_length;
     std::vector<Extent*> m_extents;
     std::ifstream* m_nullstream = nullptr;
     // lock

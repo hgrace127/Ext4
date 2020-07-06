@@ -1,8 +1,8 @@
-#include "Ext4_Extent.hpp"
+#include "Ext4Extent.hpp"
 
-Ext4_Extent::Ext4_Extent(int64_t loff, int64_t poff, int64_t count)
+Ext4Extent::Ext4Extent(int64_t loff, int64_t poff, int64_t count)
 {
-    m_LOffset = loff;
-    m_POffset = poff;
+    m_l_offset = loff;
+    m_p_offset = poff;
     m_count = count;
 }
