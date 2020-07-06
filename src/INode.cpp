@@ -5,7 +5,8 @@ using namespace std;
 
 INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
 {
-    ByteBuffer2 bb(b, offset, inodeSize, false);
+    if (UsesExtents()) inodeSize = inodeSize + 28; // +28 usesExtents 하지않으면 추가로 bb에서 읽는 과정에서 에러
+    ByteBuffer2 bb(b, offset, inodeSize, false); 
 
     m_address = imageOffset;
     m_hexRepr = "";
