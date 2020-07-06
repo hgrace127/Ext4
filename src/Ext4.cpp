@@ -44,17 +44,17 @@ auto Ext4::initExt4() -> bool
             m_superblock = new Superblock(buffer, 0);
         }
 
-        if (!m_superblock->IsValid())
+        if (!m_superblock->is_valid())
             return false;
 
-        m_blockSize = bst[m_superblock->logBlkSize];
-        m_iNodePerBlock = m_blockSize / m_superblock->iNodeSize;
-        m_iNodeBlockCount = (int)m_superblock->iNodePerGroup / m_iNodePerBlock;
-        m_blockGroupCount = (int)((m_superblock->blkCnt + m_superblock->blkPerGroup - 1) / m_superblock->blkPerGroup);
+        m_blockSize = bst[m_superblock->m_logBlkSize];
+        m_iNodePerBlock = m_blockSize / m_superblock->m_iNodeSize;
+        m_iNodeBlockCount = (int)m_superblock->m_iNodePerGroup / m_iNodePerBlock;
+        m_blockGroupCount = (int)((m_superblock->m_blkCnt + m_superblock->m_blkPerGroup - 1) / m_superblock->m_blkPerGroup);
         
-        m_iNodeSize = m_superblock->iNodeSize;
+        m_iNodeSize = m_superblock->m_iNodeSize;
 
-        m_size = m_superblock->blkCnt * m_blockSize;
+        m_size = m_superblock->m_blkCnt * m_blockSize;
 
         m_blkGroupDescTable = makeBlkGroupDescriptorTable();
 
@@ -74,7 +74,7 @@ auto Ext4::makeBlkGroupDescriptorTable() -> std::vector<BlockGroupDescriptor>
     long startAddr = m_blockSize;
     long limit = 0;
     
-    auto blkGrpSize = m_superblock->BlkGrouDescSize();
+    auto blkGrpSize = m_superblock->blk_group_desc_size();
 
     if (startAddr == 0x400)
         startAddr += 0x400;
@@ -83,19 +83,19 @@ auto Ext4::makeBlkGroupDescriptorTable() -> std::vector<BlockGroupDescriptor>
 
     for (int i = 0; i < m_blockGroupCount; i++)
     {
-        uint8_t* b0 = new uint8_t[m_superblock->blkPerGroup];
+        uint8_t* b0 = new uint8_t[m_superblock->m_blkPerGroup];
         long offset = i * blkGrpSize;
         if (offset >= limit)
         {
-            m_stream->read((char*)b0, m_superblock->blkPerGroup);
-            limit += (int)m_superblock->blkPerGroup;
+            m_stream->read((char*)b0, m_superblock->m_blkPerGroup);
+            limit += (int)m_superblock->m_blkPerGroup;
         }
 
-        BlockGroupDescriptor blkGroup(b0, offset % (int)m_superblock->blkPerGroup);
+        BlockGroupDescriptor blkGroup(b0, offset % (int)m_superblock->m_blkPerGroup);
         if (blkGroup.IsEmpty())
             break;
 
-        blkGroup.startAddrOfBlk = (unsigned int) (i * m_superblock->blkPerGroup);
+        blkGroup.startAddrOfBlk = (unsigned int) (i * m_superblock->m_blkPerGroup);
         blkGroupDescTables.push_back(blkGroup);
     }
 
@@ -140,7 +140,7 @@ auto Ext4::makeNode(INode* inode, string name = "", bool active = true) -> Node*
     if (type == NodeType::SoftLink)
         return new Node(name, type, nullptr, NodeAttr::Normal);
 
-    Node* n0 = new Node(name, type, nodeStreamFrom(inode, inode->m_blkPointers, active), NodeAttr::Normal);
+    Node* n0 = new Node(name, type, NodeState::Active, nodeStreamFrom(inode, inode->m_blkPointers, active), NodeAttr::Normal, 0L);
     
     n0->m_uid = inode->m_UID;
     n0->m_gid = inode->m_GID;
@@ -154,17 +154,17 @@ auto Ext4::findiNode(uint32_t no) -> INode*
     try
     {
         uint8_t b[0x1000];
-        int blkGroupNo = (int)((no - 1) / m_superblock->iNodePerGroup);
-        int iNodeIndex = (int)((no - 1) % m_superblock->iNodePerGroup);
-        uint32_t blkGroup =  m_blkGroupDescTable[blkGroupNo].startBlkAddrOfiNodeTable;
-        long byteOffset = blkGroup * m_blockSize + iNodeIndex * m_superblock->iNodeSize;
 
-        m_stream->seekg(byteOffset, m_stream->beg);
-        cout << "cur m_stream point : " << m_stream->tellg() << endl;
-        
+        int blkGroupNo = (int)((no - 1) / m_superblock->m_iNodePerGroup);
+        int iNodeIndex = (int)((no - 1) % m_superblock->m_iNodePerGroup);
+        uint32_t blkGroup =  m_blkGroupDescTable[blkGroupNo].startBlkAddrOfiNodeTable;
+
+        long byteOffset = blkGroup * m_blockSize + iNodeIndex * m_superblock->m_iNodeSize;
+
+        m_stream->seekg(byteOffset, m_stream->beg);        
         m_stream->read((char*)b, 0x1000);
 
-        return new INode(b, 0L, (long)m_superblock->iNodeSize, byteOffset);
+        return new INode(b, 0L, (long)m_superblock->m_iNodeSize, byteOffset);
     }
     catch(const exception& e)
     {
@@ -178,25 +178,25 @@ auto Ext4::nodeStreamFrom(INode *inode, uint8_t* extentsBuffer, bool active=true
     if (fileSize <= 0)
         return new NodeStream();
 
-    vector<Extent*>* extents = new vector<Extent*>();
+    vector<Extent*> extents;
 
     long expectedLogicalBlkNo = 0L;
-    vector<Ext4_Extent*>* extExtents = buildExtentsFrom(inode, extentsBuffer, &expectedLogicalBlkNo, active);
+    vector<Ext4_Extent*> extExtents = buildExtentsFrom(inode, extentsBuffer, &expectedLogicalBlkNo, active);
 
-    if(extExtents != nullptr && extExtents->size() > 0)
+    if(!extExtents.empty() && extExtents.size() > 0)
     {
         int64_t count = m_blockSize * ((fileSize + m_blockSize - 1) / m_blockSize);
 
-        Ext4_Extent* ez = extExtents->at(extExtents->size() -1);
+        Ext4_Extent* ez = extExtents[extExtents.size() -1];
         if(count > m_blockSize * ez->m_LOffset + ez->m_count)
         {
             long endingZeroSize = (count - (m_blockSize * ez->m_LOffset + ez->m_count));
             Ext4_Extent* ext = new Ext4_Extent(0, -1L, endingZeroSize);
-            extExtents->push_back(ext);
+            extExtents.push_back(ext);
         }
-        for (int i=0; i< extExtents->size(); i++)
+        for (int i=0; i< extExtents.size(); i++)
         {
-            extents->push_back(new Extent(m_stream, extExtents->at(i)->m_LOffset, extExtents->at(i)->m_POffset));    
+            extents.push_back(new Extent(m_stream, extExtents[i]->m_POffset, extExtents[i]->m_count));
         }
     }
 
@@ -205,9 +205,9 @@ auto Ext4::nodeStreamFrom(INode *inode, uint8_t* extentsBuffer, bool active=true
 
 
 
-auto Ext4::buildExtentsFrom(INode *inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active=true) -> vector<Ext4_Extent*>*
+auto Ext4::buildExtentsFrom(INode *inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active=true) -> vector<Ext4_Extent*>
 {
-    vector<Ext4_Extent*>* extExtents = new vector<Ext4_Extent*>();
+    vector<Ext4_Extent*> extExtents;
     
     ByteBuffer2 bb(extentsBuffer, 0, m_iNodeSize + 28); // m_iNodeSize를 주는게 맞나 ..?
     uint16_t signature = bb.get_uint16_le();
@@ -232,13 +232,13 @@ auto Ext4::buildExtentsFrom(INode *inode, uint8_t* extentsBuffer, long* expected
             m_stream->seekg(startBlkNo * m_blockSize);
             m_stream->read((char*)indirect, m_blockSize);
 
-            vector<Ext4_Extent*>* extents = buildExtentsFrom(inode, indirect, expectedLogicalBlkNo);
+            vector<Ext4_Extent*> extents = buildExtentsFrom(inode, indirect, expectedLogicalBlkNo);
 
-            if (extents == nullptr)
-                return nullptr;
+            if (extents.empty())
+                return extExtents;
 
-            for(int i=0; i < extents->size(); i++){
-                extExtents->push_back(extents->at(i));
+            for(int i=0; i < extents.size(); i++){
+                extExtents.push_back(extents[i]);
             }
         }
     }
@@ -253,7 +253,7 @@ auto Ext4::buildExtentsFrom(INode *inode, uint8_t* extentsBuffer, long* expected
             {
                 long cnt1 = (logicalBlkNo - (*expectedLogicalBlkNo)) * m_blockSize;
                 Ext4_Extent* ext1 = new Ext4_Extent(0, -1L, cnt1);
-                extExtents->push_back(ext1);
+                extExtents.push_back(ext1);
             }
 
             long noOfBlk = bb.get_uint16_le(offset + 4);
@@ -267,13 +267,13 @@ auto Ext4::buildExtentsFrom(INode *inode, uint8_t* extentsBuffer, long* expected
             *expectedLogicalBlkNo = noOfBlk + logicalBlkNo;
 
             if (startBlkNo * m_blockSize > m_size)
-                return nullptr;
+                return extExtents; // 사실상 .size() == 0인 vector
             
-            extExtents->push_back(new Ext4_Extent(logicalBlkNo, startBlkNo * m_blockSize, noOfBlk * m_blockSize));
+            extExtents.push_back(new Ext4_Extent(logicalBlkNo, startBlkNo * m_blockSize, noOfBlk * m_blockSize));
         }
 
         if (active && extentCount == 0)
-            extExtents->push_back(new Ext4_Extent(0, -1L, 0));
+            extExtents.push_back(new Ext4_Extent(0, -1L, 0));
     }
     
     return extExtents;

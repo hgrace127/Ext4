@@ -7,7 +7,7 @@
 #include "NodeList.hpp"
 #include "NodeStream.hpp"
 
-enum NodeType{
+enum class NodeType{
     None, 
     File, 
     Directory, 
@@ -32,9 +32,9 @@ enum NodeAttr
     Recovered
 };
 
- enum FileSignatureMatching
+enum class FileSignatureMatching
 {
-    Non,
+    None,
     Match,
     Mismatch,
     Bad,
@@ -72,7 +72,6 @@ public:
     NodeStream* m_stream;
     NodeAttr m_nodeAttr;
     NodeState m_state;
-    NodeType m_type;
     NodeAttr m_attr;
 
     FileSignatureMatching m_SignatureMatching;

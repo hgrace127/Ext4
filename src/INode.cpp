@@ -5,15 +5,14 @@ using namespace std;
 
 INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
 {
-    if (UsesExtents()) inodeSize = inodeSize + 28; // +28 usesExtents 하지않으면 추가로 bb에서 읽는 과정에서 에러
-    ByteBuffer2 bb(b, offset, inodeSize, false); 
+    ByteBuffer2 bb(b, offset, 0x1000, false); 
 
     m_address = imageOffset;
     m_hexRepr = "";
 
     m_fileMode    = bb.get_uint16_le(); // 0         
     m_UID         = bb.get_uint16_le(); // 2
-    m_sizeInBytes = bb.get_uint32_le(); // 4
+    m_size        = bb.get_uint32_le(); // 4
     m_accessTime  = bb.get_uint32_le(); // 8
     m_changeTime  = bb.get_uint32_le(); // 12  NOTICE: inode change time
     m_modifyTime  = bb.get_uint32_le(); // 16          file change time
@@ -49,7 +48,7 @@ INode::INode(uint8_t* b, long offset, long inodeSize, long imageOffset)
     }
 
     m_nodeSize = inodeSize;
-    m_fileSize = m_sizeInBytes;
+    m_fileSize = m_size;
     int64_t sizeHigh = m_dirACL;
     m_fileSize += (sizeHigh << 32);
 }

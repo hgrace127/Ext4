@@ -12,15 +12,15 @@ Node::Node(NodeType t)
     Node("/", t, nullptr, NodeAttr::Normal);
 }
 
-Node::Node(string name, NodeType t, NodeStream* stream = nullptr, NodeAttr attr = NodeAttr::Normal)
+Node::Node(string name, NodeType t, NodeStream* stream, NodeAttr attr)
 {  
     Node(name, t, NodeState::Active, stream, attr, 0L);
 }
 
-Node::Node(string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr attr = NodeAttr::Normal, long allocSize = 0)
+Node::Node(string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr attr, long allocSize)
 {
     m_state = s;
-    m_type  = t;
+    m_nodeType = t;
     m_attr   = attr;
 
     assert(IsHardLink() == false);
@@ -29,12 +29,13 @@ Node::Node(string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr at
     m_name = name;
 
     m_stream   = stream != nullptr ? stream : new NodeStream();
-    m_allocSize = allocSize > 0 ? allocSize : m_stream->AllocLength();
+    m_allocSize = allocSize > 0 ? allocSize : m_stream->alloc_length();
+    m_size = m_allocSize;
     m_children  = new NodeList(this, true);
     m_parent    = nullptr;
     m_check     = false;
 
-    m_SignatureMatching = FileSignatureMatching::Non;
+    m_SignatureMatching = FileSignatureMatching::None;
 }
 
 auto Node::IsDirectory() -> bool
@@ -44,7 +45,7 @@ auto Node::IsDirectory() -> bool
 
 auto Node::IsHardLink() -> bool
 {
-    return m_type == NodeType::HardLink;
+    return m_nodeType == NodeType::HardLink;
 }
 
 auto Node::setAbsolutePath(string value) -> void

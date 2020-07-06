@@ -37,7 +37,7 @@ private:
     auto makeNode(INode* inode, std::string name, bool active) -> Node*;
     auto findiNode(uint32_t no) -> INode*;
     auto nodeStreamFrom(INode* inode, uint8_t* extentsBuffer, bool active) -> NodeStream*;
-    auto buildExtentsFrom(INode* inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active) -> std::vector<Ext4_Extent*>*;
+    auto buildExtentsFrom(INode* inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active) -> std::vector<Ext4_Extent*>;
     auto makeEmptyRoot() -> Node*;
 
 public:

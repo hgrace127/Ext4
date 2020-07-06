@@ -16,7 +16,7 @@ public:
 public:
     uint16_t   m_fileMode;
     uint16_t   m_UID;         // user id
-    uint32_t   m_sizeInBytes;
+    uint32_t   m_size;
     uint32_t   m_accessTime;
     uint32_t   m_changeTime;  // NOTICE: inode change time
     uint32_t   m_modifyTime;  // file change time

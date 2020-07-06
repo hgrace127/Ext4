@@ -31,6 +31,11 @@ int main(){
      if (in.is_open())
      {
          Ext4* ext4 = new Ext4(&in, 0L, false);
+
+         cout << "EXT4 root node size:" << ext4->m_rootNode->m_size << endl;
+         cout << "EXT4 root node is dir?:" << ext4->m_rootNode->IsDirectory() << endl;
+         cout << "EXT4 block size:" << ext4->m_blockSize << endl;
+         cout << "EXT4 iNode size:" << ext4->m_iNodeSize << endl;
      }
      else
      {
