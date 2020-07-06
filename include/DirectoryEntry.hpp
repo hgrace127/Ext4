@@ -9,6 +9,7 @@ public:
     DirectoryEntry();
     DirectoryEntry(uint32_t iNodeNo);
     DirectoryEntry(uint8_t* b, long bSize ,long offset);
+    
     auto set_name(std::string name) -> void;
 
 public:

@@ -6,7 +6,7 @@ Extent::Extent(ifstream* stream, long offset = -1L, long count = -1L)
 {
     m_stream = stream;
     m_offset = offset;
-    m_count = count;
+    m_count  = count;
 }
 
 auto Extent::take(long offset, long count = 0) -> Extent*

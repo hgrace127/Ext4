@@ -48,6 +48,7 @@ public:
     Node(NodeType t);
     Node(std::string name, NodeType t, NodeStream* stream, NodeAttr attr);
     Node(std::string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr attr, long allocSize);
+    
     auto is_directory() -> bool;
     auto is_hard_link() -> bool;
     auto set_absolute_path(std::string value) -> void;
@@ -67,21 +68,21 @@ public:
     int m_dump_id;
     bool m_check;
 
-    NodeList* m_children;
     Node* m_parent;
-    NodeStream* m_stream;
-    NodeAttr m_node_attr;
-    NodeState m_state;
     NodeAttr m_attr;
+    NodeAttr m_node_attr;
+    NodeList* m_children;
+    NodeStream* m_stream;
+    NodeState m_state;
 
     FileSignatureMatching m_signature_matching;
     
 private:
+    long m_offset;
     std::string m_absolute_path; // 절대경로
     std::string m_name; 
     std::string m_extension; // 확장자
     std::string m_partition_name;
-    long m_offset;
     NodeType m_node_type;
 };
 #endif // NODE_H

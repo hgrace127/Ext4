@@ -6,7 +6,7 @@ using namespace std;
 
 NodeStream::NodeStream() 
 {
-    m_offset = 0;
+    m_offset        = 0;
     m_actual_length = 0;
 }
 

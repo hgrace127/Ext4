@@ -66,6 +66,7 @@ auto Node::set_check(bool value) -> void
 auto Node::update_child_check(Node *n, bool check) -> void 
 {
     Node* c;
+    
     for(int i=0; i < n->m_children->m_nodes->size(); i++)
     {
         c = n->m_children->m_nodes->at(i);

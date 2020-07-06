@@ -30,15 +30,15 @@ public:
     Ext4(std::ifstream* stream, long startAddress, bool isLive);
 
 private:
-    auto init_ext4() -> bool;
-    auto make_blk_group_descriptor_table() -> std::vector<BlockGroupDescriptor>;
+    auto build_extents_from(INode* inode, uint8_t* extentsBuffer, long* expected_logical_blk_no, bool active) -> std::vector<Ext4Extent*>;
+    auto find_inode(uint32_t no) -> INode*;
     auto make_root_node() -> Node*;
     auto make_node(DirectoryEntry* de) -> Node*;
     auto make_node(INode* inode, std::string name, bool active) -> Node*;
-    auto find_inode(uint32_t no) -> INode*;
-    auto node_stream_from(INode* inode, uint8_t* extentsBuffer, bool active) -> NodeStream*;
-    auto build_extents_from(INode* inode, uint8_t* extentsBuffer, long* expectedLogicalBlkNo, bool active) -> std::vector<Ext4Extent*>;
     auto make_empty_root() -> Node*;
+    auto make_blk_group_descriptor_table() -> std::vector<BlockGroupDescriptor>;
+    auto node_stream_from(INode* inode, uint8_t* extents_buffer, bool active) -> NodeStream*;
+    auto init_ext4() -> bool;
 
 public:
     long m_size;
@@ -48,13 +48,13 @@ public:
     std::ifstream* m_stream;
 
 private:
-    Superblock* m_superblock;
-    std::vector<BlockGroupDescriptor> m_blk_group_desc_table;
-    std::vector<Extent> m_indirect_extents;
+    bool m_is_live;
+    bool m_is_valid;
+    long m_start_address;
     int m_block_group_count;
     int m_inode_per_block;
     int m_inode_block_count;
-    long m_start_address;
-    bool m_is_live;
-    bool m_is_valid;
+    Superblock* m_superblock;
+    std::vector<BlockGroupDescriptor> m_blk_group_desc_table;
+    std::vector<Extent> m_indirect_extents;
 };
