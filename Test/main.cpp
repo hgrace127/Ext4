@@ -36,6 +36,10 @@ int main(){
          cout << "EXT4 root node is dir?:" << ext4->m_root_node->is_directory() << endl;
          cout << "EXT4 block size:" << ext4->m_block_size << endl;
          cout << "EXT4 iNode size:" << ext4->m_inode_size << endl;
+
+         ext4->build_filesystem();
+         ext4->show_rst();
+         cout << "build filesystem done" << endl;
      }
      else
      {

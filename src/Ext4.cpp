@@ -228,7 +228,7 @@ auto Ext4::build_extents_from(INode *inode, uint8_t* extents_buffer, long* expec
 
             m_stream->seekg(start_blk_no * m_block_size);
             m_stream->read((char*)indirect, m_block_size);
-
+             
             vector<Ext4Extent*> extents = build_extents_from(inode, indirect, expected_logical_blk_no);
 
             if (extents.empty())
@@ -294,7 +294,7 @@ auto Ext4::build_filesystem() -> void
 auto Ext4::expand_all(Node* node) -> bool
 {
     if (node == nullptr)
-        return false;
+        return true;
 
     int repeat = 10;
 
@@ -323,7 +323,14 @@ auto Ext4::expand_all(Node* node) -> bool
 
 auto Ext4::unfold_tree(Node* node) -> void
 {
+    rst.insert(pair<string, Node*>(node->m_absolute_path, node));
 
+    for (auto child : node->m_children->m_nodes)
+    {
+        rst.insert(pair<string, Node*>(child->m_absolute_path, child));
+        if (child->is_expandable())
+            unfold_tree(child);
+    }
 }
 
 auto Ext4::expand(Node* from, string dir = "") -> Node*
@@ -337,10 +344,9 @@ auto Ext4::expand(Node* from, string dir = "") -> Node*
     if (len < 0)
         return nullptr;
     
-    this->m_stream;
-
     // buffer 할당해제 필요할 수 있음.
-    auto buffer = ns->read(m_stream, 0, len);
+    
+    auto buffer = ns->read(m_stream, 0L, len);
     long offset = 0;
     int nil_iteration = 0;
 
@@ -355,16 +361,19 @@ auto Ext4::expand(Node* from, string dir = "") -> Node*
 
             if (dir != "" && dir != de->m_name)
                 continue;
-
-            if (de->is_empty() && de->has_valid_name())
+             
+            if (!de->is_empty() && de->has_valid_name())
             {
-
                 Node* n0 = make_node(de);
                 from->m_children->add(n0);
             }
             else
             {
+                if (de->m_recode_length == 0)
+                    nil_iteration++;
 
+                if (nil_iteration == 5)
+                    break;
             }
         }
         catch (const exception& e)
@@ -376,4 +385,12 @@ auto Ext4::expand(Node* from, string dir = "") -> Node*
     }
 
     return from;
+}
+
+auto Ext4::show_rst() -> void
+{
+    for (auto e : rst)
+    {
+        cout << e.first << " : " << e.second->m_name << endl;
+    }
 }

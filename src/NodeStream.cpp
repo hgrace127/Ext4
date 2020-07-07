@@ -59,8 +59,24 @@ auto NodeStream::read(ifstream* stream, long offset, int size) -> uint8_t*
     assert(size > 0);
 
     uint8_t* buffer = new uint8_t[size];
-    stream->seekg(offset, stream->beg);
-    stream->read((char*)buffer, size);
+
+    int limit = 0;
+    int i = 0;
+
+    while (i < m_extents.size() && limit + m_extents[i]->m_count <= size) {
+        stream->seekg(m_extents[i]->m_offset, stream->beg);
+        stream->read((char*)buffer + limit, m_extents[i]->m_count);
+
+        limit += m_extents[i]->m_count;
+        i++;
+    }
+     
+    if (limit != size)
+    {
+        stream->seekg(m_extents[i]->m_offset, stream->beg);
+        stream->read((char*)buffer + limit, size - limit);
+    }
+    
 
     return buffer;
 }

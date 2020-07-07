@@ -16,7 +16,7 @@ DirectoryEntry::DirectoryEntry(uint32_t iNodeNo)
 
 DirectoryEntry::DirectoryEntry(uint8_t* b, long bSize ,long offset)
 {
-    ByteBuffer2 bb (b, bSize, false);
+    ByteBuffer2 bb (b, offset, bSize, false);
 
     m_inode_no      = bb.get_uint32_le();
     m_recode_length = bb.get_uint16_le();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <List>
 #include <fstream>
 
@@ -28,10 +29,11 @@ class Ext4
 {
 public:
     Ext4(std::ifstream* stream, long startAddress, bool isLive);
+    auto build_filesystem() -> void;
+    auto show_rst() -> void;
 
 private:
     auto build_extents_from(INode* inode, uint8_t* extentsBuffer, long* expected_logical_blk_no, bool active) -> std::vector<Ext4Extent*>;
-    auto build_filesystem() -> void;
     auto expand(Node* node, std::string dir) -> Node*;
     auto expand_all(Node* node) -> bool;
     auto find_inode(uint32_t no) -> INode*;
@@ -43,6 +45,7 @@ private:
     auto node_stream_from(INode* inode, uint8_t* extents_buffer, bool active) -> NodeStream*;
     auto init_ext4() -> bool;
     auto unfold_tree(Node* node) -> void;
+
 
 
 public:
@@ -62,4 +65,5 @@ private:
     Superblock* m_superblock;
     std::vector<BlockGroupDescriptor> m_blk_group_desc_table;
     std::vector<Extent> m_indirect_extents;
+    std::map<std::string, Node*> rst;
 };
