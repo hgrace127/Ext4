@@ -2,15 +2,12 @@
 #include <vector>
 
 #include "Ext4.hpp"
-#include "Ext4Extent.hpp"
 #include "Extent.hpp"
+#include "NodeStream.hpp"
 #include "DirectoryEntry.hpp"
 #include "byte_buffer2.hpp"
 
 using namespace std;
-
-#define _DEBUG 1
-
 
 Ext4::Ext4(ifstream* stream, long startAddress = 0L, bool isLive = false)
 {
@@ -104,6 +101,7 @@ auto Ext4::make_root_node() -> Node*
     DirectoryEntry* de = new DirectoryEntry(2);
     de->set_name("/");
     Node* node = make_node(de);
+    node->m_is_root = true;
 
     return node->is_directory() ? node : make_empty_root();
 }
@@ -281,4 +279,101 @@ auto Ext4::build_extents_from(INode *inode, uint8_t* extents_buffer, long* expec
 auto Ext4::make_empty_root() -> Node*
 {
     return new Node(NodeType::Directory);
+}
+
+auto Ext4::build_filesystem() -> void
+{
+    m_root_node->m_children->m_nodes.clear();
+
+    expand_all(m_root_node);
+
+    unfold_tree(m_root_node);
+    
+}
+
+auto Ext4::expand_all(Node* node) -> bool
+{
+    if (node == nullptr)
+        return false;
+
+    int repeat = 10;
+
+    for (int i = 0; i < repeat; i++)
+    {
+        try
+        {
+            node = expand(node, "");
+            break;
+        }
+        catch (const exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+    }
+
+    for each (Node* child in node->m_children->m_nodes)
+    {
+        if (child->is_expandable())
+            if (!expand_all(child))
+                return false;
+    }
+
+    return true;
+}
+
+auto Ext4::unfold_tree(Node* node) -> void
+{
+
+}
+
+auto Ext4::expand(Node* from, string dir = "") -> Node*
+{
+    if (!from->is_directory())
+        return nullptr;
+
+    NodeStream* ns = from->m_stream;
+    long len = ns->m_actual_length;
+
+    if (len < 0)
+        return nullptr;
+    
+    this->m_stream;
+
+    // buffer 할당해제 필요할 수 있음.
+    auto buffer = ns->read(m_stream, 0, len);
+    long offset = 0;
+    int nil_iteration = 0;
+
+    while (offset < len)
+    {
+        DirectoryEntry* de = new DirectoryEntry(buffer, len, offset);
+
+        try
+        {
+            if (de->is_soft_link())
+                continue;
+
+            if (dir != "" && dir != de->m_name)
+                continue;
+
+            if (de->is_empty() && de->has_valid_name())
+            {
+
+                Node* n0 = make_node(de);
+                from->m_children->add(n0);
+            }
+            else
+            {
+
+            }
+        }
+        catch (const exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        
+        offset += de->m_recode_length;
+    }
+
+    return from;
 }

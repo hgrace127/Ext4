@@ -49,13 +49,18 @@ public:
     Node(std::string name, NodeType t, NodeStream* stream, NodeAttr attr);
     Node(std::string name, NodeType t, NodeState s, NodeStream* stream, NodeAttr attr, long allocSize);
     
+    
+    auto is_container() -> bool;
     auto is_directory() -> bool;
+    auto is_expandable() -> bool;
     auto is_hard_link() -> bool;
     auto set_absolute_path(std::string value) -> void;
     auto set_check(bool value) -> void;
+    auto update_child() -> void;
     auto update_child_check(Node *n, bool check) -> void;
     auto update_parent_check(Node *n) -> void;
     auto update_check_by_children(Node *n) -> void;
+
 
 public:
     long m_uid;
@@ -67,6 +72,9 @@ public:
     uint64_t m_ref_id;
     int m_dump_id;
     bool m_check;
+    bool m_is_root;
+    std::string m_absolute_path; // 절대경로
+    std::string m_name;
 
     Node* m_parent;
     NodeAttr m_attr;
@@ -79,8 +87,7 @@ public:
     
 private:
     long m_offset;
-    std::string m_absolute_path; // 절대경로
-    std::string m_name; 
+    
     std::string m_extension; // 확장자
     std::string m_partition_name;
     NodeType m_node_type;

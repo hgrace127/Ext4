@@ -10,9 +10,12 @@ public:
     NodeList();
     NodeList(Node* node, bool isOwner);
 
+    auto add(Node* node) -> void;
+
+
 public:
     int m_count;
-    std::vector<Node*>* m_nodes;
+    std::vector<Node*> m_nodes;
 
 private:
     int m_active_node_index;

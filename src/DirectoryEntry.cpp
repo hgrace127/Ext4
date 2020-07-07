@@ -29,3 +29,18 @@ auto DirectoryEntry::set_name(string name) -> void
 {
     m_name = name;
 }
+
+auto DirectoryEntry::is_soft_link() -> bool
+{
+    return m_file_type == 0x07;
+}
+
+auto DirectoryEntry::is_empty() -> bool
+{
+    return m_inode_no == 0;
+}
+
+auto DirectoryEntry::has_valid_name() -> bool
+{
+    return !m_name.empty() && m_name != "." && m_name != "..";
+}

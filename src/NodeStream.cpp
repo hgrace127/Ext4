@@ -1,4 +1,5 @@
 #include <vector>
+#include <assert.h>
 
 #include "NodeStream.hpp"
 
@@ -51,4 +52,15 @@ auto NodeStream::alloc_length() -> long
     }
 
     return rst;
+}
+
+auto NodeStream::read(ifstream* stream, long offset, int size) -> uint8_t*
+{
+    assert(size > 0);
+
+    uint8_t* buffer = new uint8_t[size];
+    stream->seekg(offset, stream->beg);
+    stream->read((char*)buffer, size);
+
+    return buffer;
 }

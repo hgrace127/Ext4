@@ -31,6 +31,9 @@ public:
 
 private:
     auto build_extents_from(INode* inode, uint8_t* extentsBuffer, long* expected_logical_blk_no, bool active) -> std::vector<Ext4Extent*>;
+    auto build_filesystem() -> void;
+    auto expand(Node* node, std::string dir) -> Node*;
+    auto expand_all(Node* node) -> bool;
     auto find_inode(uint32_t no) -> INode*;
     auto make_root_node() -> Node*;
     auto make_node(DirectoryEntry* de) -> Node*;
@@ -39,6 +42,8 @@ private:
     auto make_blk_group_descriptor_table() -> std::vector<BlockGroupDescriptor>;
     auto node_stream_from(INode* inode, uint8_t* extents_buffer, bool active) -> NodeStream*;
     auto init_ext4() -> bool;
+    auto unfold_tree(Node* node) -> void;
+
 
 public:
     long m_size;

@@ -10,6 +10,9 @@ public:
     DirectoryEntry(uint32_t iNodeNo);
     DirectoryEntry(uint8_t* b, long bSize ,long offset);
     
+    auto has_valid_name() -> bool;
+    auto is_empty() -> bool;
+    auto is_soft_link() -> bool;
     auto set_name(std::string name) -> void;
 
 public:
