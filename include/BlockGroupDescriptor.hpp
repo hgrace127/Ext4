@@ -14,7 +14,7 @@ public:
     uint32_t start_blk_addr_of_inode_table;
 
 public:
-    BlockGroupDescriptor(uint8_t buff[], int offset);
+    BlockGroupDescriptor(uint8_t* buff, int offset);
     
     auto is_empty() -> bool;
 };

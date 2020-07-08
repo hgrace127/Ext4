@@ -1,7 +1,7 @@
 #include "BlockGroupDescriptor.hpp"
 #include "byte_buffer2.hpp"
 
-BlockGroupDescriptor::BlockGroupDescriptor(uint8_t buff[], int offset)
+BlockGroupDescriptor::BlockGroupDescriptor(uint8_t* buff, int offset)
 {
     ByteBuffer2 bb(buff, 0, 0x20, true);
 

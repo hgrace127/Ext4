@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cstring>
 
 #include "Ext4.hpp"
 #include "Extent.hpp"
@@ -73,18 +74,22 @@ auto Ext4::make_blk_group_descriptor_table() -> std::vector<BlockGroupDescriptor
         start_addr += 0x400;
 
     std::vector<BlockGroupDescriptor> blk_group_desc_tables;
+    uint8_t* b0 = new uint8_t[m_superblock->m_blk_per_group];
 
     for (int i = 0; i < m_block_group_count; i++)
     {
-        uint8_t* b0 = new uint8_t[m_superblock->m_blk_per_group];
         long offset = i * blk_group_size;
+        uint8_t* b1 = new uint8_t[m_superblock->m_blk_per_group];
+
         if (offset >= limit)
         {
+            m_stream->seekg(start_addr + limit, m_stream->beg);
             m_stream->read((char*)b0, m_superblock->m_blk_per_group);
             limit += (int)m_superblock->m_blk_per_group;
         }
 
-        BlockGroupDescriptor blk_group(b0, offset % (int)m_superblock->m_blk_per_group);
+        memcpy(b1, b0, m_superblock->m_blk_per_group);
+        BlockGroupDescriptor blk_group(b1, offset % (int)m_superblock->m_blk_per_group);
 
         if (blk_group.is_empty())
             break;
@@ -180,7 +185,7 @@ auto Ext4::node_stream_from(INode *inode, uint8_t* extents_buffer, bool active=t
     long expected_logical_blk_no = 0L;
     vector<Ext4Extent*> ext4_extents = build_extents_from(inode, extents_buffer, &expected_logical_blk_no, active);
 
-    if(!ext4_extents.empty() && ext4_extents.size() > 0)
+    if (!ext4_extents.empty() && ext4_extents.size() > 0)
     {
         int64_t count = m_block_size * ((file_size + m_block_size - 1) / m_block_size);
 
@@ -286,9 +291,7 @@ auto Ext4::build_filesystem() -> void
     m_root_node->m_children->m_nodes.clear();
 
     expand_all(m_root_node);
-
     unfold_tree(m_root_node);
-    
 }
 
 auto Ext4::expand_all(Node* node) -> bool
@@ -391,6 +394,6 @@ auto Ext4::show_rst() -> void
 {
     for (auto e : rst)
     {
-        cout << e.first << " : " << e.second->m_name << endl;
+        cout << e.first << " : " << (int)e.second->m_node_type << endl;
     }
 }

@@ -82,7 +82,7 @@ public:
     NodeList* m_children;
     NodeStream* m_stream;
     NodeState m_state;
-
+    NodeType m_node_type;
     FileSignatureMatching m_signature_matching;
     
 private:
@@ -90,6 +90,6 @@ private:
     
     std::string m_extension; // 확장자
     std::string m_partition_name;
-    NodeType m_node_type;
+    
 };
 #endif // NODE_H
